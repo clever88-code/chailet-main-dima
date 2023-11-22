@@ -1,0 +1,91 @@
+{% extends 'main/general.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+{% block title %}Заявка{% endblock %}
+{% block body %}
+
+
+{% if user.is_authenticated %}
+<script src="https://npmcdn.com/flatpickr/dist/flatpickr.min.js"></script>
+<script src="https://npmcdn.com/flatpickr/dist/l10n/ru.js"></script>
+
+<script src="path/to/ru.js"></script>
+
+<div class="container">
+
+    <div class="tab-content">
+        <div class="tab-pane fade show active" id="add_application" role="tabpanel" aria-labelledby="add_application-tab">
+            <div class="card w-100">
+                <div class="card-body">
+                    <h2>Забранировать зал</h2>
+                    <form method="post" action="{% url 'request:add_orders' %}">
+                        {% csrf_token %}
+                        {{ form|crispy }}
+                        <button class="w-100 btn btn-lg btn-primary mt-4" type="submit" id="submit" onclick="clicks();">Забранировать</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    deleteAsteriskFields()
+    itemFormRow()
+    IMask(document.getElementById('id_date_booking'), {
+      mask: Date,
+      pattern: 'DD.MM.YYYY HH:mm',
+      lazy: false,
+
+      format: function (date) {
+        return moment(date).format('DD.MM.YYYY HH:mm');
+      },
+      parse: function (str) {
+        return moment(str, 'DD.MM.YYYY HH:mm');
+      },
+
+      blocks: {
+        YYYY: {
+          mask: IMask.MaskedRange,
+          from: 2020,
+          to: 2050
+        },
+        MM: {
+          mask: IMask.MaskedRange,
+          from: 1,
+          to: 12
+        },
+        DD: {
+          mask: IMask.MaskedRange,
+          from: 1,
+          to: 31
+        },
+        HH: {
+          mask: IMask.MaskedRange,
+          from: 0,
+          to: 23
+        },
+        mm: {
+          mask: IMask.MaskedRange,
+          from: 0,
+          to: 59
+        }
+      }
+    })
+</script>
+<script>
+    $('#id_date_booking').datetimepicker({
+        container:'body',
+        language:'ru',
+        minuteStep:5,
+        format:'dd.mm.yyyy hh:ii',
+        weekStart:1,
+        startDate: new Date()
+    })
+
+</script>
+{% else %}
+<div class="container">
+<h1 class="fw-light a">Для бронирование нужна авторизация или регестрация!</h1>
+</div>
+{% endif %}
+{% endblock %}
